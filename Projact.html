@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Museum of Us</title>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+<style>
+/* ============ พื้นฐาน ============ */
+:root {
+  --bg: #050818;
+  --bg2: #101a4d;
+  --gold: #e8c987;
+  --rose: #f4a6c0;
+  --tx: #f3ecff;
+  --card: rgba(255,255,255,.07);
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top,0px);
+  padding-bottom: env(safe-area-inset-bottom,0px);
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+html,body {
+  height: 100%;
+}
+body {
+  font-family: 'Mitr',sans-serif;
+  color: var(--tx);
+  background: radial-gradient(ellipse at 50% 0,var(--bg2),var(--bg) 70%) fixed;
+  overflow: hidden;
+}
+.pg {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  gap: 14px;
+  overflow-y: auto;
+  animation: fadein 1s ease;
+  z-index: 1;
+}
+.pg.on {
+  display: flex;
+}
+@keyframes fadein {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+h1,h2 {
+  font-family: 'Playfair Display','Mitr',serif;
+  font-weight: 400;
+  color: var(--gold);
+  text-shadow: 0 0 20px rgba(232,201,135,.5);
+}
+h1 {
+  font-size: 2rem;
+}
+h2 {
+  font-size: 1.5rem;
+}
+p {
+  max-width: 330px;
+  line-height: 1.8;
+  font-weight: 300;
+  font-size: .95rem;
+}
+small {
+  opacity: .75;
+}
+.btn {
+  background: linear-gradient(135deg,var(--gold),#b8924a);
+  color: #1a1230;
+  border: 0;
+  padding: 11px 26px;
+  border-radius: 30px;
+  font: 400 1rem 'Mitr';
+  cursor: pointer;
+  box-shadow: 0 0 22px rgba(232,201,135,.4);
+}
+.btn.ghost {
+  background: var(--card);
+  color: var(--tx);
+  box-shadow: none;
+  border: 1px solid rgba(255,255,255,.25);
+}
+.row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+.petal {
+  position: fixed;
+  top: -30px;
+  color: var(--gold);
+  pointer-events: none;
+  z-index: 0;
+  opacity: .8;
+  animation: fall linear forwards;
+}
+@keyframes fall {
+  to {
+    transform: translateY(110vh) rotate(360deg);
+  }
+}
+.bob {
+  animation: bob 2.2s infinite;
+}
+@keyframes bob {
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+/* ============ ตั๋ว ============ */
+.ticket {
+  width: 300px;
+  filter: drop-shadow(0 18px 30px #000);
+}
+.t-head {
+  background: #f3e6c8;
+  color: #1b2150;
+  padding: 22px 20px;
+  border-radius: 14px 14px 0 0;
+  border: 2px solid var(--gold);
+  border-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+}
+.t-head h1 {
+  color: #1b2150;
+  text-shadow: none;
+  font-size: 1.7rem;
+}
+.t-head.ready {
+  box-shadow: 0 0 40px var(--gold);
+  animation: pulse 1.6s infinite;
+}
+@keyframes pulse {
+  50% {
+    transform: scale(1.03);
+  }
+}
+.t-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: .72rem;
+  letter-spacing: 1px;
+}
+.t-perf {
+  height: 0;
+  border-top: 3px dashed #8a6d3b;
+  background: #f3e6c8;
+  position: relative;
+}
+.t-perf:before,.t-perf:after {
+  content: "";
+  position: absolute;
+  top: -13px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #0a1040;
+}
+.t-perf:before {
+  left: -12px;
+}
+.t-perf:after {
+  right: -12px;
+}
+.t-stub {
+  background: #f3e6c8;
+  color: #1b2150;
+  padding: 16px;
+  border: 2px solid var(--gold);
+  border-top: 0;
+  border-radius: 0 0 14px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: .75rem;
+  cursor: grab;
+  touch-action: none;
+}
+.t-bar {
+  height: 34px;
+  width: 80%;
+  background: repeating-linear-gradient(90deg,#1b2150 0 2px,transparent 2px 5px,#1b2150 5px 6px,transparent 6px 10px);
+}
+.t-stub.torn {
+  animation: drop 1.3s forwards;
+  pointer-events: none;
+}
+@keyframes drop {
+  to {
+    transform: translateY(300px) rotate(20deg);
+    opacity: 0;
+  }
+}
+
+/* ============ ประตู ============ */
+.door {
+  width: 150px;
+  height: 230px;
+  position: relative;
+  perspective: 800px;
+}
+.door .glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 70px 70px 4px 4px;
+  background: radial-gradient(circle,#fff6d0,#e8c987 60%,#a56);
+  box-shadow: 0 0 40px var(--gold);
+}
+.door .leaf {
+  position: absolute;
+  inset: 0;
+  border-radius: 70px 70px 4px 4px;
+  background: linear-gradient(160deg,#f6efe6,#d9cfe6);
+  border: 3px solid var(--gold);
+  transform-origin: left;
+  transition: transform 1.8s;
+}
+.door .leaf:after {
+  content: "";
+  position: absolute;
+  right: 14px;
+  top: 55%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+.door.open .leaf {
+  transform: rotateY(-105deg);
+}
+.door .flowers {
+  position: absolute;
+  top: -18px;
+  left: 0;
+  right: 0;
+  font-size: 1.5rem;
+  z-index: 2;
+}
+
+/* ============ โหลด + เกมเครื่องบิน ============ */
+.bar {
+  width: 240px;
+  height: 10px;
+  border-radius: 10px;
+  background: var(--card);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.2);
+}
+.bar i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg,var(--rose),var(--gold));
+  transition: width .1s;
+}
+.gwrap {
+  position: relative;
+  width: 300px;
+  height: 420px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--gold);
+  box-shadow: 0 0 40px rgba(232,201,135,.25);
+}
+#gc {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+#gover {
+  position: absolute;
+  inset: 0;
+  background: rgba(5,8,24,.78);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 20px;
+}
+
+/* ============ รูปซ้อน + เค้ก + โน้ต ============ */
+.polaroid {
+  background: #fffaf2;
+  color: #33243f;
+  padding: 12px 12px 16px;
+  border-radius: 6px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.6);
+  width: 260px;
+}
+.polaroid .img {
+  height: 240px;
+  border-radius: 3px;
+  background: linear-gradient(135deg,#2b3a9e,#8a4fa8) center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+}
+.polaroid p {
+  color: #33243f;
+  margin: 10px auto 0;
+  font-size: .85rem;
+  line-height: 1.5;
+}
+.stack {
+  position: relative;
+  width: 300px;
+  height: 340px;
+  touch-action: none;
+}
+.cake {
+  font-size: 5.5rem;
+  cursor: pointer;
+  line-height: 1.1;
+  user-select: none;
+}
+.candles {
+  font-size: 2rem;
+  letter-spacing: 6px;
+  transition: .6s;
+}
+.paper {
+  background: #fff8ea;
+  color: #3b2a40;
+  padding: 22px;
+  border-radius: 4px;
+  width: min(330px,92vw);
+  box-shadow: 0 15px 40px #000;
+  transform: rotate(-1deg);
+}
+.paper p {
+  color: #3b2a40;
+}
+#black {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 2.2s;
+  z-index: 90;
+}
+#black.on {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ============ มือถือ ============ */
+.phone {
+  width: 290px;
+  height: 580px;
+  border-radius: 42px;
+  border: 8px solid #1a1a2e;
+  background: #000;
+  box-shadow: 0 0 0 2px #444,0 0 60px rgba(244,166,192,.3);
+  position: relative;
+  overflow: hidden;
+}
+.screen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(170deg,#2a1b5e,#7a3c8c 55%,#f4a6c0);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding: 34px 16px 20px;
+  gap: 10px;
+}
+.screen.on {
+  display: flex;
+  animation: fadein .8s;
+}
+.screen:before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  width: 80px;
+  height: 18px;
+  border-radius: 12px;
+  background: #000;
+}
+.clock {
+  font-size: 3.4rem;
+  font-weight: 300;
+  margin-top: 20px;
+}
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3,58px);
+  gap: 8px;
+  margin-top: auto;
+}
+.keypad button {
+  height: 50px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(255,255,255,.22);
+  color: #fff;
+  font: 1.2rem 'Mitr';
+}
+.dots {
+  display: flex;
+  gap: 12px;
+}
+.dots i {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1.5px solid #fff;
+}
+.dots i.fill {
+  background: #fff;
+}
+.shake {
+  animation: shake .4s;
+}
+@keyframes shake {
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
+}
+.app {
+  width: 84px;
+  height: 84px;
+  border-radius: 22px;
+  margin-top: 60px;
+  cursor: pointer;
+  background: linear-gradient(145deg,#1b2260,#3a2a80);
+  border: 1px solid var(--gold);
+  box-shadow: 0 8px 20px rgba(0,0,0,.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bob 2.4s infinite;
+}
+.mini {
+  width: 41px;
+  height: 62px;
+  position: relative;
+  margin-top: 10px;
+}
+.mini .door {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: scale(.27);
+  transform-origin: 0 0;
+}
+.app.go {
+  animation: zoom 1s forwards;
+}
+@keyframes zoom {
+  to {
+    transform: scale(14);
+    opacity: 0;
+  }
+}
+
+/* ============ ห้องเครื่องเล่นแผ่นเสียง + ดอกไม้หน้าประตู ============ */
+.room {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+}
+.deck {
+  width: 250px;
+  height: 170px;
+  border-radius: 16px;
+  background: linear-gradient(145deg,#2a1d40,#120b24);
+  border: 1px solid var(--gold);
+  position: relative;
+  box-shadow: 0 20px 40px #000;
+}
+.disc {
+  position: absolute;
+  left: 22px;
+  top: 22px;
+  width: 126px;
+  height: 126px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: .6s;
+  background: radial-gradient(circle,var(--rose) 0 14%,#111 15% 30%,#222 31% 33%,#111 34% 60%,#222 61% 63%,#111 64%);
+}
+.disc.out {
+  transform: translate(110px,-120px) scale(.8) rotate(-20deg);
+}
+.disc.spin {
+  animation: spin 3s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.arm {
+  position: absolute;
+  right: 30px;
+  top: 14px;
+  width: 6px;
+  height: 90px;
+  background: var(--gold);
+  border-radius: 4px;
+  transform-origin: top;
+  transform: rotate(25deg);
+  transition: 1s;
+}
+.arm.on {
+  transform: rotate(-8deg);
+}
+.note {
+  position: absolute;
+  font-size: 1.4rem;
+  color: var(--rose);
+  opacity: 0;
+}
+.deck.playing .note {
+  animation: floatnote 3s infinite;
+}
+@keyframes floatnote {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(15px,-60px);
+  }
+}
+.gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.flower-row {
+  display: flex;
+  gap: 6px;
+}
+.flower {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 1px solid rgba(232,201,135,.5);
+  background: var(--card);
+  font-size: 1.7rem;
+  cursor: pointer;
+  transition: .3s;
+}
+.flower.seen {
+  background: rgba(244,166,192,.35);
+  border-color: var(--rose);
+  box-shadow: 0 0 18px var(--rose);
+}
+#fmean {
+  font-size: .8rem;
+  min-height: 48px;
+  color: var(--gold);
+}
+.door.locked {
+  filter: brightness(.55);
+}
+
+/* ============ ทางเดินพิพิธภัณฑ์ ============ */
+#scene {
+  width: 100vw;
+  height: 430px;
+  perspective: 800px;
+  perspective-origin: 50% 45%;
+  overflow: hidden;
+  position: relative;
+  margin: 0 -20px;
+}
+#corridor {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 3s cubic-bezier(.45,0,.25,1);
+}
+.frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 150px;
+  margin: -110px 0 0 -75px;
+  border: 2px solid var(--rose);
+  border-radius: 14px;
+  background: #1a0b14;
+  box-shadow: 0 0 28px rgba(244,166,192,.65);
+  overflow: hidden;
+  cursor: pointer;
+  transition: opacity 2s,filter 2s;
+}
+.frame .img {
+  height: 180px;
+  background: linear-gradient(135deg,#2b3a9e,#8a4fa8) center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+}
+.frame b {
+  display: block;
+  padding: 9px 5px;
+  font: 300 .74rem 'Mitr';
+  min-height: 40px;
+}
+.frame.solo {
+  width: 200px;
+  margin: -140px 0 0 -100px;
+}
+.frame.solo .img {
+  height: 240px;
+}
+.walk {
+  border-radius: 50%;
+  width: 84px;
+  height: 84px;
+  border: 2px solid var(--rose);
+  background: #150a14;
+  color: #fff;
+}
+#lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(0,0,0,.65);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.pop-card {
+  width: min(330px,92vw);
+  max-height: 92vh;
+  overflow-y: auto;
+  background: #1a0b14;
+  border: 2px solid #ff5c8a;
+  border-radius: 18px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 0 40px rgba(255,92,138,.6),0 0 90px rgba(255,92,138,.25);
+  animation: fadein .4s;
+}
+.pop-card .img {
+  width: 100%;
+  height: 260px;
+  border-radius: 12px;
+  background: linear-gradient(135deg,#2b3a9e,#8a4fa8) center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+}
+.pop-card h3 {
+  font: 400 1.1rem 'Mitr';
+  color: #fff;
+}
+.pop-card p {
+  color: #f3ecff;
+  max-width: none;
+}
+
+/* ============ โน้ตแผ่นใหญ่ (สครัปบุ๊ก) ============ */
+.scrap {
+  position: relative;
+  width: min(330px,94vw);
+  padding: 10px 0 130px;
+}
+.letter {
+  position: relative;
+  margin: 92px auto 0;
+  width: 92%;
+  padding: 26px 22px 80px;
+  border-radius: 4px;
+  text-align: left;
+  color: #3b2a40;
+  line-height: 28px;
+  font-size: .95rem;
+  box-shadow: 0 15px 40px #000;
+  background-color: #fff8ea;
+  background-image: repeating-linear-gradient(transparent 0 27px,#e8d9c4 27px 28px);
+}
+.tape {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  width: 90px;
+  height: 24px;
+  margin-left: -45px;
+  background: rgba(244,166,192,.7);
+  transform: rotate(-3deg);
+}
+.snap {
+  position: absolute;
+  background: #fffaf2;
+  padding: 6px 6px 22px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.6);
+}
+.snap .img {
+  background: linear-gradient(135deg,#2b3a9e,#8a4fa8) center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+}
+.s1 {
+  top: 0;
+  left: -4px;
+  width: 112px;
+  transform: rotate(-9deg);
+}
+.s1 .img,.s2 .img {
+  height: 92px;
+}
+.s2 {
+  top: 8px;
+  right: -4px;
+  width: 112px;
+  transform: rotate(8deg);
+}
+.s3 {
+  bottom: 22px;
+  left: 50%;
+  width: 160px;
+  margin-left: -80px;
+  transform: rotate(-3deg);
+}
+.s3 .img {
+  height: 112px;
+}
+.deco {
+  position: absolute;
+  font-size: 2.6rem;
+}
+
+/* ============ เมนูตอนจบ ============ */
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 250px;
+}
+.menu .btn {
+  width: 100%;
+}
+
+/* ============ วาดรูป + ของขวัญ ============ */
+#draw {
+  background: #fff8ea;
+  border-radius: 12px;
+  touch-action: none;
+  width: min(320px,90vw);
+  height: 210px;
+}
+textarea {
+  width: min(320px,90vw);
+  height: 90px;
+  border-radius: 12px;
+  border: 1px solid var(--gold);
+  background: var(--card);
+  color: var(--tx);
+  padding: 10px;
+  font: 300 .95rem 'Mitr';
+}
+.gift {
+  font-size: 5rem;
+  cursor: pointer;
+  animation: bob 2s infinite;
+}
+.pop {
+  font-size: 4rem;
+  animation: pop 1s;
+}
+@keyframes pop {
+  from {
+    transform: scale(0) rotate(-90deg);
+  }
+}
+</style></head>
+<body>
+<div id="black"></div>
+
+<!-- 1. ตั๋ว -->
+<section class="pg" id="ticket"><h2>GALLERY ADMISSION</h2>
+ <div class="ticket">
+  <div class="t-head" id="tHead"><small>EXHIBITION OF OUR LOVE</small><h1>MUSEUM OF US</h1>
+   <div class="t-info"><span>ADMIT TWO</span><span>№ 080326</span></div>
+   <div class="t-info"><span>SEAT: IN MY HEART</span><span>DATE: FOREVER</span></div></div>
+  <div class="t-perf"></div>
+  <div class="t-stub" id="tStub"><span>✂ ฉีกตรงนี้ · TEAR HERE</span><div class="t-bar"></div><span>ลากลงหรือแตะเพื่อฉีก</span></div>
+ </div>
+ <p id="tHint">ฉีกตูดตั๋วก่อน แล้วค่อยแตะที่ตั๋วเพื่อเข้าชม ✨</p></section>
+
+<!-- 2. ประตูเปิด -->
+<section class="pg" id="entry"><div class="door" id="entryDoor"><div class="flowers">🌷🌸🌻</div><div class="glow"></div><div class="leaf"></div></div><p>ประตูกำลังเปิด...</p></section>
+
+<!-- 3. โหลด -->
+<section class="pg on" id="loading"><h2>Loading...</h2><div class="bar"><i id="loadBar"></i></div><p>กำลังเตรียมเกม ✈️<br><small>ลากนิ้วเพื่อบังคับเครื่องบิน หลบบล็อกให้ได้ 20 วินาที</small></p></section>
+
+<!-- 4. เกมเครื่องบิน -->
+<section class="pg" id="game"><h2>Fly Through the Night ✈️</h2>
+ <div class="gwrap"><canvas id="gc" width="300" height="420"></canvas>
+  <div id="gover"><p id="gmsg">ลากนิ้วซ้าย-ขวาเพื่อบังคับเครื่องบิน<br>หลบบล็อกให้ได้ 20 วินาที (มี 3 ชีวิต)</p><button class="btn" onclick="startGame()">เริ่มเล่น ✈️</button></div></div></section>
+
+<!-- 5. วันเกิด: รูปซ้อน -->
+<section class="pg" id="bday"><h1>HAPPY BIRTHDAY ♥</h1><div class="stack" id="stack"></div><small>ลากรูปไปซ้ายหรือขวาเพื่อดูรูปต่อไป</small>
+ <button class="btn" onclick="show('cake')">ไปต่อ ♥</button></section>
+
+<!-- 6. เค้ก -->
+<section class="pg" id="cake"><h2>ทำพิธีเป่าเค้ก</h2><div class="candles" id="candles">🕯️🕯️🕯️</div><div class="cake" id="cakeBtn">🎂</div>
+ <p id="cakeText">แตะที่เค้ก 1 ครั้งเพื่อ "ขอพร" ✨</p></section>
+
+<!-- 7. โน้ตวันเกิด -->
+<section class="pg" id="bnote"><h2>HAPPY BIRTHDAY 🎂</h2><div class="paper"><p id="bdayMsg"></p></div>
+ <button class="btn" id="bnoteBtn" onclick="endBirthday()">ปิดการ์ด ♥</button></section>
+
+<!-- 8. มือถือ -->
+<section class="pg" id="phonePg"><div class="phone">
+ <div class="screen on" id="lockScreen"><div class="clock" id="clock">00:00</div><small id="lockGreeting">hi, favorite person ♥ 🌙✨</small><p style="font-size:.8rem">ใส่รหัสเพื่อปลดล็อก 🔒</p><div class="dots" id="dots"></div><div class="keypad" id="keypad"></div></div>
+ <div class="screen" id="homeScreen"><small>ยินดีต้อนรับ ♥</small>
+  <div class="app" id="app" onclick="openApp()"><div class="mini"><div class="door"><div class="flowers">🌷🌸🌻</div><div class="glow"></div><div class="leaf"></div></div></div></div>
+  <small>Museum of Us</small><small style="margin-top:auto">แตะที่ประตู 👆</small></div></div></section>
+
+<!-- 9. ห้องเครื่องเล่นแผ่นเสียง + ประตู -->
+<section class="pg" id="room"><h2>WELCOME TO OUR ROOM</h2>
+ <div class="room">
+  <div><div class="deck" id="deck"><div class="disc out" id="disc" onclick="toggleRecord()"></div><div class="arm" id="arm"></div><span class="note" style="left:170px;top:90px">♪</span><span class="note" style="left:200px;top:110px;animation-delay:1s">♫</span></div>
+   <small id="recText">แตะแผ่นเสียงเพื่อวางลงเครื่องเล่น 🎵</small></div>
+  <div class="gate"><div class="flower-row" id="flowerRow"></div>
+   <div class="door locked" id="gateDoor" style="cursor:pointer" onclick="tryDoor()"><div class="glow"></div><div class="leaf"></div></div>
+   <p id="fmean">แตะดอกไม้ให้ครบทุกดอกก่อน แล้วประตูจะเปิดได้ 🌷</p></div>
+ </div></section>
+
+<!-- 10. ทางเดินพิพิธภัณฑ์ -->
+<section class="pg" id="museum"><h2>WELCOME TO OUR MUSEUM</h2><div id="scene"><div id="corridor"></div></div>
+ <div class="row"><button class="btn ghost" onclick="walk(-1)">◀</button><button class="btn walk" onclick="walk(1)">WALK</button></div>
+ <small>กด WALK เดินช้า ๆ · แตะที่รูปไหนก็ได้เพื่ออ่านโน้ตของรูปนั้น</small>
+ <button class="btn" id="museumNext" style="display:none" onclick="show('big')">ไปต่อ ♥</button></section>
+
+<!-- 11. โน้ตแผ่นใหญ่ -->
+<section class="pg" id="big"><h2>A Big Note For You</h2>
+ <div class="scrap" id="scrap"><div class="letter"><span class="tape"></span><span id="bigText"></span></div>
+  <div class="deco" style="left:-6px;bottom:0">🌷</div><div class="deco" style="right:-6px;bottom:0">🌹</div>
+  <div class="deco" style="left:44px;bottom:-4px;font-size:1.7rem">🌸</div><div class="deco" style="right:44px;bottom:-4px;font-size:1.7rem">🪻</div></div>
+ <button class="btn" onclick="show('heart')">ไปต่อ ♥</button></section>
+
+<!-- 12. ความในใจ -->
+<section class="pg" id="heart"><h2>ความในใจ ♥</h2><textarea placeholder="เขียนความในใจตรงนี้..."></textarea>
+ <canvas id="draw" width="640" height="420"></canvas>
+ <div class="row"><button class="btn ghost" onclick="clearDraw()">ล้าง</button><button class="btn" onclick="show('closing')">เสร็จแล้ว</button></div></section>
+
+<!-- 13. ปิดประตู -->
+<section class="pg" id="closing"><h1>Happy Anniversary ♥</h1><div class="door" id="closeDoor"><div class="flowers">🌷🌸🌻</div><div class="glow"></div><div class="leaf" style="transition-duration:2.4s"></div></div>
+ <p>WAIT... ประตูปิดแล้ว แต่เรามีอะไรอีกอย่างให้เธอ ♥</p><button class="btn" onclick="show('gift')">ปิดพิพิธภัณฑ์ & เปิดของขวัญ 🎁</button></section>
+
+<!-- 14. ของขวัญ -->
+<section class="pg" id="gift"><h2 id="giftTitle">ของขวัญวันเกิด 🎂</h2><div class="gift" id="gift1" onclick="openGift1()">🎁</div><p id="giftText">แตะกล่องเพื่อเปิด</p><div class="gift" id="gift2" style="display:none" onclick="openGift2()">🎁</div>
+ <button class="btn" id="giftNext" style="display:none" onclick="show('menu')">ไปต่อ ♥</button></section>
+
+<!-- 15. เมนู: เลือกกลับไปดูส่วนไหนก็ได้ -->
+<section class="pg" id="menu"><h2>ขอบคุณที่ดูจนจบนะ ♥</h2><p>อยากกลับไปดูตรงไหนอีกไหม?</p>
+ <div class="menu">
+  <button class="btn" onclick="replayGame()">🎮 กลับไปหน้าเกม</button>
+  <button class="btn" onclick="replayBirthday()">🎂 กลับไปหน้าวันเกิด</button>
+  <button class="btn" onclick="replayAnniversary()">💞 กลับไปหน้าวันครบรอบ</button>
+ </div></section>
+
+<div id="lightbox" onclick="closeNote()"></div>
+
+<script>
+/* ==================================================
+   ลำดับหน้าของเว็บนี้
+   โหลด -> เกมเครื่องบิน -> ตั๋ว -> ประตู -> วันเกิด (รูปซ้อน -> เค้ก -> โน้ต)
+   -> จอมืด -> มือถือ (ใส่รหัส) -> ห้องแผ่นเสียง -> พิพิธภัณฑ์ -> โน้ตแผ่นใหญ่
+   -> ความในใจ -> ปิดประตู -> ของขวัญ -> เมนู (เลือกกลับไปดูส่วนไหนก็ได้)
+
+   วิธีแก้ไข: แก้ที่ CONFIG ด้านล่างที่เดียวพอ ไม่ต้องไปแตะโค้ดส่วนอื่น
+
+   ★ ใส่รูปที่ไหน?
+     ใส่ที่ช่อง src ในแต่ละรายการด้านล่าง (birthdayPhotos, museumPhotos, bigPhotos)
+     - ถ้าอัปขึ้น GitHub Pages: วางรูปไว้โฟลเดอร์ img/ แล้วเขียน src: "img/01.jpg"
+     - หรือใช้ลิงก์รูปออนไลน์ก็ได้ เช่น src: "https://....jpg"
+     - ถ้าเว้นว่างไว้ "" จะขึ้นเป็นกรอบรูปเปล่าแทน
+
+   ★ ใส่เพลงที่ไหน?
+     ที่ music ด้านล่าง ใส่ไฟล์ .mp3 ของเธอเอง เช่น birthday: "music/birthday.mp3"
+     - birthday    = เพลงวันเกิด เล่นวนตั้งแต่หน้าวันเกิด จนกด "ปิดการ์ด"
+     - anniversary = เพลงวันครบรอบ เริ่มตอนวางแผ่นเสียง แล้วเล่นวนไปเรื่อย ๆ
+     - เลือกช่วงเวลาของเพลงได้ด้วย Start / End (หน่วยเป็นวินาที)
+     - ถ้าเว้นว่าง "" จะใช้ทำนองสั้น ๆ ที่เว็บสร้างเสียงเองแทน (ไม่ใช่ไฟล์เพลงจริง)
+   ================================================== */
+const CONFIG = {
+  passcode: "0803",   // รหัส 4 หลักบนมือถือ
+
+  // หน้าจอมือถือ
+  phone: {
+    lockWallpaper: "",   // ★ รูปพื้นหลังหน้าล็อกสกรีน เช่น "img/lock.jpg" (เว้นว่าง = ใช้สีไล่เฉด)
+    homeWallpaper: "",   // รูปพื้นหลังหน้าโฮม (เว้นว่างจะใช้รูปเดียวกับหน้าล็อก)
+    greeting: "hi, favorite person ♥ 🌙✨"   // ข้อความใต้นาฬิกา
+  },
+
+  music: {
+    birthday: "",           // ไฟล์เพลงวันเกิด เช่น "music/birthday.mp3"
+    birthdayStart: 0,       // เริ่มเล่นที่วินาทีที่เท่าไหร่ (เช่น 45 = เริ่มที่ 0:45)
+    birthdayEnd: 0,         // เล่นถึงวินาทีที่เท่าไหร่ แล้ววนกลับไปจุดเริ่ม (0 = เล่นจนจบเพลง)
+
+    anniversary: "",        // ไฟล์เพลงวันครบรอบ เช่น "music/anniversary.mp3"
+    anniversaryStart: 0,    // เริ่มที่วินาทีที่เท่าไหร่
+    anniversaryEnd: 0       // เล่นถึงวินาทีที่เท่าไหร่ แล้ววนกลับ (0 = จนจบเพลง)
+  },
+
+  // รูปกองซ้อนตอนวันเกิด
+  birthdayPhotos: [
+    { src: "", caption: "วันแรกที่เจอกัน 🌙" },
+    { src: "", caption: "ยิ้มของเธอสวยที่สุด" },
+    { src: "", caption: "ขอบคุณที่เกิดมานะ" },
+    { src: "", caption: "วันเกิดปีที่แล้ว 🎂" },
+    { src: "", caption: "รักนะ ♥" }
+  ],
+  birthdayMessage: "สุขสันต์วันเกิดนะ ♥<br>ขอให้ปีนี้เต็มไปด้วยเรื่องราวดี ๆ รอยยิ้ม และวันที่ทำให้มีความสุข ขอบคุณที่เกิดมา และเติบโตมาเป็นเธอในวันนี้<br><b>happy birthday, my favorite person ♥</b>",
+
+  // รูปในพิพิธภัณฑ์ 7 รูป  (title = ข้อความที่เห็นก่อนกด, note = โน้ตตอนกดเข้าไป)
+  museumPhotos: [
+    { src: "", title: "DAY1 — เจอวันแรก",    note: "วันแรกที่เราเจอกัน เขินมากแต่ก็ดีใจ" },
+    { src: "", title: "DAY2 — เที่ยวด้วยกัน", note: "ครั้งแรกที่ไปเที่ยวสองคน" },
+    { src: "", title: "DAY3 — มื้ออร่อย",     note: "มื้ออร่อยที่สุดเพราะมีเธอ" },
+    { src: "", title: "DAY4 — ฝนตก",          note: "วันที่ฝนตก แต่ใจอุ่น" },
+    { src: "", title: "DAY5 — ภาพในใจ",       note: "ภาพที่เก็บไว้ในใจเสมอ" },
+    { src: "", title: "DAY6 — ทริปแรก",       note: "ทริปแรกของเรา" },
+    { src: "", title: "OUR LOVE ♥",           note: "และอีกหลายวันต่อจากนี้ เราไปด้วยกันนะ" }
+  ],
+
+  // ดอกไม้หน้าประตู (แตะให้ครบก่อนเข้า)
+  flowers: [
+    { icon: "🌷", name: "ทิวลิป",    meaning: "รักแท้ ความรักที่จริงใจ" },
+    { icon: "🌸", name: "ซากุระ",    meaning: "จุดเริ่มต้นใหม่ที่สวยงาม" },
+    { icon: "🌻", name: "ทานตะวัน",  meaning: "ศรัทธาและความหวัง มองหาเธอเสมอ" },
+    { icon: "🪻", name: "ลาเวนเดอร์", meaning: "ความผูกพัน ความสงบ" }
+  ],
+
+  // โน้ตแผ่นใหญ่ + รูป 3 รูป
+  bigNote: "ถึงคนที่ฉันรักที่สุด<br>ขอบคุณที่อยู่ข้างกันในทุกวัน ครบรอบนี้อยากบอกว่า...ฉันยังเลือกเธอ ทุกวัน ทุกปี ♥",
+  bigPhotos: ["", "", ""]
+};
+
+/* ============ ตัวช่วยพื้นฐาน ============ */
+const $ = id => document.getElementById(id);
+function show(id) {
+  document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+  $(id).classList.add('on');
+}
+function bg(src)   { return src ? `background-image:url('${src}')` : ''; }   // รูปพื้นหลัง
+function icon(src) { return src ? '' : '📷'; }                                // ไอคอนแทนรูปที่ว่าง
+
+/* โหมดดูซ้ำ: เป็น true หลังจากดูครบแล้ว (ตอนเลือกกลับไปดูจากเมนู) */
+let replay = false;
+
+/* กลีบดอกไม้ลอย */
+setInterval(() => {
+  const e = document.createElement('span');
+  e.className = 'petal';
+  e.textContent = ['✦', '🌸', '·', '✧', '♥'][Math.floor(Math.random() * 5)];
+  e.style.left = Math.random() * 100 + 'vw';
+  e.style.fontSize = (8 + Math.random() * 14) + 'px';
+  e.style.animationDuration = (8 + Math.random() * 8) + 's';
+  document.body.appendChild(e);
+  setTimeout(() => e.remove(), 16000);
+}, 800);
+
+/* ============ เพลง ============
+   ถ้าใส่ไฟล์ใน CONFIG.music จะเล่นไฟล์นั้น ถ้าไม่ใส่จะใช้ทำนองที่สร้างเสียงเอง */
+let audioCtx = null;        // ตัวสร้างเสียง (ใช้กับทำนองสำรอง)
+let fileAudio = null;       // เพลงจากไฟล์ที่กำลังเล่น
+let synthToken = null;      // ใช้บอกว่าทำนองสำรองยังเล่นอยู่ไหม
+
+function midiToHz(m) { return 440 * 2 ** ((m - 69) / 12); }
+
+function tone(midi, seconds) {
+  audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+  const osc = audioCtx.createOscillator(), vol = audioCtx.createGain(), t = audioCtx.currentTime;
+  osc.type = 'triangle'; osc.frequency.value = midiToHz(midi);
+  osc.connect(vol); vol.connect(audioCtx.destination);
+  vol.gain.setValueAtTime(0, t);
+  vol.gain.linearRampToValueAtTime(.18, t + .03);
+  vol.gain.exponentialRampToValueAtTime(.001, t + seconds * 1.4);
+  osc.start(t); osc.stop(t + seconds * 1.5);
+}
+
+function playSynth(song, bpm) {                 // เล่นทำนองวนไปเรื่อย ๆ
+  const me = {}; synthToken = me; let i = 0;
+  (function nextNote() {
+    if (synthToken !== me) return;              // ถูกสั่งหยุดแล้ว
+    const [note, beats] = song[i];
+    if (note) tone(note, beats * 60 / bpm);
+    i = (i + 1) % song.length;
+    setTimeout(nextNote, beats * 60000 / bpm);
+  })();
+}
+
+function playMusic(kind) {                      // kind = 'birthday' หรือ 'anniversary'
+  stopMusic();
+  const file = CONFIG.music[kind];
+  if (file) {
+    const start = CONFIG.music[kind + 'Start'] || 0;   // วินาทีเริ่มต้น
+    const end   = CONFIG.music[kind + 'End'] || 0;     // วินาทีสุดท้าย (0 = จนจบเพลง)
+    const song  = new Audio(file);
+    fileAudio = song;
+    song.addEventListener('loadedmetadata', () => {     // โหลดเพลงเสร็จ -> กระโดดไปจุดเริ่ม แล้วเล่น
+      if (fileAudio !== song) return;
+      song.currentTime = start;
+      song.play().catch(() => {});
+    });
+    song.addEventListener('timeupdate', () => {         // ถึงจุดสิ้นสุดที่ตั้งไว้ -> วนกลับจุดเริ่ม
+      if (end && song.currentTime >= end) song.currentTime = start;
+    });
+    song.addEventListener('ended', () => {              // เพลงจบเอง -> วนกลับจุดเริ่ม
+      song.currentTime = start;
+      song.play().catch(() => {});
+    });
+  } else if (kind === 'birthday') playSynth(SONG_BIRTHDAY, 110);
+  else playSynth(SONG_ANNIVERSARY, 92);
+}
+
+function stopMusic() {
+  if (fileAudio) { fileAudio.pause(); fileAudio = null; }
+  synthToken = null;
+}
+// [โน้ต MIDI, จำนวนจังหวะ]
+const SONG_BIRTHDAY = [
+  [67,.75],[67,.25],[69,1],[67,1],[72,1],[71,2],       // Happy birthday to you
+  [67,.75],[67,.25],[69,1],[67,1],[74,1],[72,2],       // Happy birthday to you
+  [67,.75],[67,.25],[79,1],[76,1],[72,1],[71,1],[69,1],// Happy birthday dear ...
+  [77,.75],[77,.25],[76,1],[72,1],[74,1],[72,2.5],     // Happy birthday to you
+  [0,1.5]                                              // พักเงียบก่อนวนใหม่
+];
+const SONG_ANNIVERSARY = [];
+[[57,60,64],[53,57,60],[48,52,55],[55,59,62]].forEach(c => {
+  [c[0]-12, c[1], c[2], c[1]+12, c[2], c[1], c[2], c[1]].forEach(m => SONG_ANNIVERSARY.push([m, .5]));
+});
+
+/* ==================================================
+   1) ตั๋ว (มาหลังเล่นเกมจบ): ฉีกตูด -> แตะหัวตั๋ว -> ประตู -> วันเกิด
+   ================================================== */
+let torn = false, dragStart = null;
+function tearStub() {
+  if (torn) return;
+  torn = true;
+  $('tStub').classList.add('torn');
+  $('tHead').classList.add('ready');
+  $('tHint').textContent = 'ฉีกแล้ว! แตะที่ตั๋วเพื่อเข้าชมได้เลย ✨';
+}
+$('tStub').addEventListener('pointerdown', e => { dragStart = e.clientY; $('tStub').setPointerCapture(e.pointerId); });
+$('tStub').addEventListener('pointermove', e => { if (dragStart !== null && e.clientY - dragStart > 35) tearStub(); });
+$('tStub').addEventListener('click', tearStub);
+$('tHead').addEventListener('click', () => {
+  if (!torn) { $('tHint').textContent = 'ฉีกตูดตั๋วก่อนนะ ✂'; return; }
+  show('entry');
+  setTimeout(() => $('entryDoor').classList.add('open'), 300);
+  setTimeout(startBirthday, 2600);
+});
+
+/* ============ 0) หน้าโหลด (หน้าแรก) -> เกม ============ */
+function showLoading() {
+  show('loading');
+  let percent = 0;
+  const timer = setInterval(() => {
+    percent = Math.min(100, percent + 2 + Math.random() * 4);
+    $('loadBar').style.width = percent + '%';
+    if (percent >= 100) { clearInterval(timer); setTimeout(() => show('game'), 400); }
+  }, 90);
+}
+showLoading();   // เปิดเว็บมาเริ่มที่หน้าโหลด -> เกม -> ตั๋ว
+
+/* ==================================================
+   3) เกมเครื่องบิน: ลากนิ้วหลบบล็อกให้ครบ 20 วินาที
+   ================================================== */
+const GW = 300, GH = 420, GOAL = 20, PLANE_Y = GH - 60;
+const gctx = $('gc').getContext('2d');
+const game = { running: false, x: GW / 2, blocks: [], lives: 3, time: 0, spawnIn: 0, hurt: 0, last: 0 };
+
+function startGame() {
+  $('gover').style.display = 'none';
+  Object.assign(game, { running: true, x: GW / 2, blocks: [], lives: 3, time: 0, spawnIn: 0, hurt: 0, last: performance.now() });
+  requestAnimationFrame(gameLoop);
+}
+function gameLoop(now) {
+  if (!game.running) return;
+  const dt = Math.min((now - game.last) / 1000, .05);
+  game.last = now;
+  updateGame(dt);
+  drawGame();
+  requestAnimationFrame(gameLoop);
+}
+function updateGame(dt) {
+  game.time += dt;
+  game.spawnIn -= dt;
+  game.hurt = Math.max(0, game.hurt - dt);
+
+  if (game.spawnIn <= 0) {                       // สร้างบล็อกใหม่ (ช้า ๆ ไม่หนักมือ)
+    const w = 30 + Math.random() * 30;
+    game.blocks.push({ x: Math.random() * (GW - w), y: -w, w, speed: 80 + Math.random() * 40 });
+    game.spawnIn = 0.9;
+  }
+  game.blocks.forEach(b => b.y += b.speed * dt);
+  game.blocks = game.blocks.filter(b => b.y < GH + 60);
+
+  if (!game.hurt) {                              // ชนบล็อก
+    const hit = game.blocks.find(b => {
+      const closeSideways = Math.abs(game.x - (b.x + b.w / 2)) < b.w / 2 + 11;     // ใกล้กันแนวซ้าย-ขวา
+      const closeVertical = Math.abs(PLANE_Y - (b.y + b.w / 2)) < b.w / 2 + 14;    // ใกล้กันแนวบน-ล่าง
+      return closeSideways && closeVertical;
+    });
+    if (hit) { game.lives--; game.hurt = 1.2; game.blocks.splice(game.blocks.indexOf(hit), 1); }
+  }
+  if (game.lives <= 0) endGame('ชนหมดแล้ว 😅 ลองอีกครั้งนะ', 'เล่นใหม่');
+  else if (game.time >= GOAL) { endGame('ถึงแล้ว! เก่งมาก 🎉', null); setTimeout(afterGame, 1400); }
+}
+function endGame(message, buttonText) {
+  game.running = false;
+  $('gmsg').textContent = message;
+  $('gover').style.display = 'flex';
+  $('gover').querySelector('button').style.display = buttonText ? '' : 'none';
+  if (buttonText) $('gover').querySelector('button').textContent = buttonText;
+}
+function drawGame() {
+  const g = gctx;
+  const sky = g.createLinearGradient(0, 0, 0, GH);
+  sky.addColorStop(0, '#0a1040'); sky.addColorStop(1, '#3a2a80');
+  g.fillStyle = sky; g.fillRect(0, 0, GW, GH);
+
+  g.fillStyle = 'rgba(255,255,255,.12)'; g.fillRect(10, 10, GW - 20, 8);                // แถบความคืบหน้า
+  g.fillStyle = '#e8c987'; g.fillRect(10, 10, (GW - 20) * Math.min(1, game.time / GOAL), 8);
+  g.font = '18px sans-serif'; g.fillText('♥'.repeat(game.lives) || '', 12, 44);
+
+  game.blocks.forEach(b => {                                                           // บล็อก
+    g.fillStyle = '#f4a6c0'; g.shadowColor = '#f4a6c0'; g.shadowBlur = 12;
+    g.beginPath(); g.roundRect(b.x, b.y, b.w, b.w, 8); g.fill(); g.shadowBlur = 0;
+  });
+
+  if (game.hurt > 0 && Math.floor(game.hurt * 10) % 2) return;                         // กะพริบตอนโดนชน
+  g.fillStyle = '#e8c987';                                                             // เครื่องบิน
+  g.beginPath(); g.moveTo(game.x, PLANE_Y - 20); g.lineTo(game.x - 20, PLANE_Y + 12);
+  g.lineTo(game.x, PLANE_Y + 4); g.lineTo(game.x + 20, PLANE_Y + 12); g.closePath(); g.fill();
+}
+function steer(e) {
+  const r = $('gc').getBoundingClientRect();
+  game.x = Math.max(15, Math.min(GW - 15, (e.clientX - r.left) * GW / r.width));
+}
+$('gc').addEventListener('pointerdown', steer);
+$('gc').addEventListener('pointermove', steer);
+window.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft') game.x = Math.max(15, game.x - 22);
+  if (e.key === 'ArrowRight') game.x = Math.min(GW - 15, game.x + 22);
+});
+
+/* ==================================================
+   4) วันเกิด: เพลง + รูปซ้อน + เค้ก + โน้ต
+   ================================================== */
+function startBirthday() {
+  show('bday');
+  if (!replay) playMusic('birthday');           // เพลงวันเกิดเล่นแค่รอบแรก
+}
+
+/* รูปซ้อนกัน ลากไปซ้าย/ขวาเพื่อดูรูปถัดไป */
+(function buildStack() {
+  const box = $('stack'), photos = CONFIG.birthdayPhotos;
+  let order = photos.map((_, i) => i), startX = null, dx = 0;
+
+  const cards = photos.map(p => {
+    const d = document.createElement('div');
+    d.className = 'polaroid';
+    d.style.cssText = 'position:absolute;left:50%;top:10px;margin-left:-130px;transition:.4s;cursor:grab';
+    d.innerHTML = `<div class="img" style="${bg(p.src)}">${icon(p.src)}</div><p>${p.caption}</p>`;
+    box.appendChild(d);
+    return d;
+  });
+  function layout() {                              // จัดการ์ดให้ซ้อนกัน
+    order.forEach((idx, depth) => {
+      const c = cards[idx], tilt = depth ? (depth % 2 ? 3 : -3) * depth : -2;
+      c.style.zIndex = 99 - depth;
+      c.style.opacity = depth > 3 ? 0 : 1;
+      c.style.transform = `translateY(${depth * 10}px) rotate(${tilt}deg) scale(${1 - depth * .04})`;
+    });
+  }
+  layout();
+  box.addEventListener('pointerdown', e => {         // เริ่มลาก
+    box.setPointerCapture(e.pointerId);
+    startX = e.clientX;
+    dx = 0;
+    cards[order[0]].style.transition = 'none';
+  });
+  box.addEventListener('pointermove', e => {
+    if (startX === null) return;
+    dx = e.clientX - startX;
+    cards[order[0]].style.transform = `translateX(${dx}px) rotate(${dx / 15}deg)`;
+  });
+  box.addEventListener('pointerup', () => {
+    if (startX === null) return;
+    const top = cards[order[0]]; top.style.transition = '.4s'; startX = null;
+    if (Math.abs(dx) > 50) {                       // ปัดออก แล้วไปอยู่ล่างสุด
+      top.style.transform = `translateX(${dx > 0 ? 420 : -420}px) rotate(${dx > 0 ? 30 : -30}deg)`;
+      top.style.opacity = 0;
+      setTimeout(() => {
+        order.push(order.shift());                   // ใบบนสุดไปอยู่ล่างสุดของกอง
+        top.style.transition = 'none';
+        layout();
+        void top.offsetWidth;                        // บังคับให้เบราว์เซอร์วาดใหม่ก่อนเปิดแอนิเมชันกลับ
+        top.style.transition = '.4s';
+      }, 320);
+    } else layout();
+  });
+})();
+
+/* เค้ก: แตะครั้งที่ 1 = ขอพร, ครั้งที่ 2 = เป่าเทียน, รอ 7 วิ -> โน้ตอวยพร */
+let cakeStep = 0;
+$('bdayMsg').innerHTML = CONFIG.birthdayMessage;
+$('cakeBtn').addEventListener('click', () => {
+  if (cakeStep === 0) {
+    cakeStep = 1;
+    $('cakeText').innerHTML = 'หลับตา...ขอพรในใจ 🙏✨<br><small>พร้อมแล้วแตะอีกครั้งเพื่อเป่าเทียน</small>';
+    $('cakeBtn').style.filter = 'drop-shadow(0 0 30px #ffb347)';
+  } else if (cakeStep === 1) {
+    cakeStep = 2;
+    $('candles').textContent = '💨 💨 💨'; $('candles').style.opacity = .4;
+    $('cakeBtn').style.filter = 'none';
+    $('cakeText').textContent = 'ฟู่ววว~ ขอให้พรเป็นจริงนะ ♥';
+    confetti();
+    setTimeout(() => show('bnote'), 7000);
+  }
+});
+function confetti() {
+  for (let i = 0; i < 28; i++) {
+    const e = document.createElement('span');
+    e.className = 'petal'; e.textContent = ['🎉', '✨', '🎊', '💖'][i % 4];
+    e.style.left = Math.random() * 100 + 'vw'; e.style.fontSize = '22px';
+    e.style.animationDuration = (3 + Math.random() * 3) + 's'; e.style.zIndex = 5;
+    document.body.appendChild(e); setTimeout(() => e.remove(), 7000);
+  }
+}
+
+/* จบวันเกิด: เพลงหยุด จอมืด แล้วมือถือโผล่ */
+function endBirthday() {
+  if (replay) { show('menu'); return; }        // ดูซ้ำ: กลับเมนูเลย ไม่ต้องจอมืด
+  stopMusic();
+  $('black').classList.add('on');
+  setTimeout(() => {
+    show('phonePg'); updateClock();
+    $('black').classList.remove('on');
+  }, 3200);
+}
+
+/* ==================================================
+   5) วันครบรอบ: มือถือ -> ห้อง -> พิพิธภัณฑ์ -> ...
+   ================================================== */
+function updateClock() {
+  $('clock').textContent = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+/* ใส่รูปพื้นหลังมือถือจาก CONFIG.phone (มีแผ่นเงามืดบาง ๆ ทับ เพื่อให้ตัวหนังสืออ่านง่าย) */
+function setWallpaper(screenId, src) {
+  if (!src) return;                                  // ไม่ได้ใส่รูป -> ใช้สีไล่เฉดเดิม
+  $(screenId).style.background =
+    `linear-gradient(rgba(0,0,0,.25), rgba(0,0,0,.4)), url('${src}') center/cover`;
+}
+setWallpaper('lockScreen', CONFIG.phone.lockWallpaper);
+setWallpaper('homeScreen', CONFIG.phone.homeWallpaper || CONFIG.phone.lockWallpaper);
+$('lockGreeting').textContent = CONFIG.phone.greeting;
+
+/* ปุ่มกดรหัสบนมือถือ */
+let entered = '';
+for (let i = 0; i < 4; i++) $('dots').innerHTML += '<i></i>';
+function refreshDots() { [...$('dots').children].forEach((d, i) => d.classList.toggle('fill', i < entered.length)); }
+function pressKey(k) {
+  if (k === '⌫') entered = entered.slice(0, -1);
+  else if (entered.length < 4) entered += k;
+  refreshDots();
+  if (entered.length < 4) return;
+  if (entered === CONFIG.passcode) {
+    entered = ''; refreshDots();
+    $('lockScreen').classList.remove('on'); $('homeScreen').classList.add('on');
+  } else {                                           // รหัสผิด
+    $('dots').classList.add('shake');
+    setTimeout(() => { $('dots').classList.remove('shake'); entered = ''; refreshDots(); }, 450);
+  }
+}
+[1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, '⌫'].forEach(k => {
+  const b = document.createElement('button');
+  b.textContent = k; if (k === '') b.style.visibility = 'hidden';
+  b.onclick = () => pressKey(k);
+  $('keypad').appendChild(b);
+});
+function openApp() { $('app').classList.add('go'); setTimeout(() => show('room'), 900); }
+
+/* เครื่องเล่นแผ่นเสียง: วางแผ่นแล้วเพลงครบรอบเล่นวน */
+let recordOn = false;
+function toggleRecord() {
+  recordOn = !recordOn;
+  $('disc').classList.toggle('out', !recordOn);
+  $('disc').classList.toggle('spin', recordOn);
+  $('arm').classList.toggle('on', recordOn);
+  $('deck').classList.toggle('playing', recordOn);
+  $('recText').textContent = recordOn ? '♫ กำลังเล่นเพลงของเรา' : 'แตะแผ่นเสียงเพื่อวางลงเครื่องเล่น 🎵';
+  if (recordOn) playMusic('anniversary'); else stopMusic();
+}
+
+/* ดอกไม้หน้าประตู: แตะให้ครบทุกดอก ประตูถึงจะเปิดได้ */
+const seenFlowers = new Set();
+CONFIG.flowers.forEach((f, i) => {
+  const b = document.createElement('button');
+  b.className = 'flower'; b.textContent = f.icon;
+  b.onclick = () => {
+    b.classList.add('seen'); seenFlowers.add(i);
+    $('fmean').innerHTML = `${f.icon} ${f.name} — ${f.meaning}`;
+    if (seenFlowers.size === CONFIG.flowers.length) {
+      $('gateDoor').classList.remove('locked');
+      setTimeout(() => $('fmean').innerHTML += '<br>ครบแล้ว! แตะประตูเพื่อเปิดได้เลย ✨', 600);
+    }
+  };
+  $('flowerRow').appendChild(b);
+});
+function tryDoor() {
+  if (seenFlowers.size < CONFIG.flowers.length) { $('fmean').textContent = 'แตะดอกไม้ให้ครบทุกดอกก่อนนะ 🌷'; return; }
+  $('gateDoor').classList.add('open');
+  setTimeout(() => { show('museum'); updateMuseum(); }, 1900);
+}
+
+/* ==================================================
+   6) ทางเดินพิพิธภัณฑ์: เดินช้า ๆ ภาพข้างหน้าเห็นลาง ๆ
+   ================================================== */
+const STEP = 380;                                   // ระยะห่างระหว่างคู่รูป
+const photos = CONFIG.museumPhotos;
+const lastStage = (photos.length - 1) >> 1;         // ด่านสุดท้าย (รูปที่ 7 เดี่ยว ๆ)
+const frames = [];
+let stage = 0;
+
+photos.forEach((p, n) => {
+  const solo = (n === photos.length - 1) && photos.length % 2 === 1;
+  const side = solo ? 0 : (n % 2 ? 1 : -1);          // ซ้าย -1 / ขวา 1 / กลาง 0
+  const f = document.createElement('div');
+  f.className = 'frame' + (solo ? ' solo' : '');
+  f.stage = n >> 1;
+  f.photo = p;
+  f.style.transform = `translate3d(${side * 135}px,0,${-f.stage * STEP}px) rotateY(${-side * 25}deg)`;
+  f.innerHTML = `<div class="img" style="${bg(p.src)}">${icon(p.src)}</div><b>${p.title}</b>`;
+  $('corridor').appendChild(f);
+  frames.push(f);
+});
+function updateMuseum() {
+  $('corridor').style.transform = `translateZ(${stage * STEP}px)`;
+  frames.forEach(f => {
+    const ahead = f.stage - stage;                  // 0 = ตรงหน้า, 1+ = ข้างหน้า, ติดลบ = เดินผ่านแล้ว
+    if (ahead < 0)       { f.style.opacity = 0;                       f.style.filter = 'none'; }
+    else if (ahead === 0) { f.style.opacity = 1;                       f.style.filter = 'none'; }
+    else {                                           // รูปข้างหน้า: เห็นลาง ๆ ยิ่งไกลยิ่งจาง
+      f.style.opacity = Math.max(.18, .5 - ahead * .12);
+      f.style.filter = `blur(${1.5 + ahead}px) brightness(.7)`;
+    }
+  });
+  $('museumNext').style.display = stage === lastStage ? '' : 'none';
+}
+function walk(dir) { stage = Math.max(0, Math.min(lastStage, stage + dir)); updateMuseum(); }
+
+/* แตะรูปไหนก็ได้ (รวมรูปที่เห็นลาง ๆ ข้างหน้า) -> เปิดการ์ดโน้ตของรูปนั้น */
+$('scene').addEventListener('click', e => {
+  const candidates = frames.filter(f => f.stage >= stage).sort((a, b) => a.stage - b.stage);   // ใกล้ตัวก่อน
+  const hit = candidates.find(f => {
+    const r = f.getBoundingClientRect();
+    return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+  });
+  if (hit) showNote(hit.photo);
+});
+function showNote(p) {
+  $('lightbox').innerHTML = `<div class="pop-card" onclick="event.stopPropagation()">
+      <div class="img" style="${bg(p.src)}">${icon(p.src)}</div>
+      <h3>${p.title}</h3><p>${p.note}</p>
+      <button class="btn ghost" onclick="closeNote()">ปิด</button></div>`;
+  $('lightbox').style.display = 'flex';
+}
+function closeNote() { $('lightbox').style.display = 'none'; }
+
+/* ==================================================
+   7) โน้ตแผ่นใหญ่ / วาดรูป / ปิดประตู / ของขวัญ
+   ================================================== */
+$('bigText').innerHTML = CONFIG.bigNote;
+['s1', 's2', 's3'].forEach((cls, i) => {
+  const s = CONFIG.bigPhotos[i] || '';
+  const d = document.createElement('div');
+  d.className = 'snap ' + cls;
+  d.innerHTML = `<div class="img" style="${bg(s)}">${icon(s)}</div>`;
+  $('scrap').appendChild(d);
+});
+
+const draw = $('draw'), dctx = draw.getContext('2d');
+let drawing = false;
+dctx.lineWidth = 5; dctx.lineCap = 'round'; dctx.strokeStyle = '#c2456e';
+function drawPoint(e) {
+  const r = draw.getBoundingClientRect();
+  return [(e.clientX - r.left) * draw.width / r.width, (e.clientY - r.top) * draw.height / r.height];
+}
+draw.addEventListener('pointerdown', e => { drawing = true; dctx.beginPath(); dctx.moveTo(...drawPoint(e)); });
+draw.addEventListener('pointermove', e => { if (drawing) { dctx.lineTo(...drawPoint(e)); dctx.stroke(); } });
+draw.addEventListener('pointerup', () => drawing = false);
+function clearDraw() { dctx.clearRect(0, 0, draw.width, draw.height); }
+
+new MutationObserver(() => {                         // ประตูปิดตอนเข้าหน้า closing
+  if ($('closing').classList.contains('on')) {
+    $('closeDoor').classList.add('open');
+    setTimeout(() => $('closeDoor').classList.remove('open'), 500);
+  }
+}).observe($('closing'), { attributes: true });
+
+function openGift1() {
+  $('gift1').className = 'pop'; $('gift1').textContent = '🧴';
+  $('giftText').innerHTML = 'น้ำหอมกลิ่นโปรดของเธอ ✨<br>ของขวัญวันเกิด ♥<br><small>แต่...ยังมีอีกชิ้นนะ 👀</small>';
+  $('gift2').style.display = '';
+}
+function openGift2() {
+  $('gift2').className = 'pop'; $('gift2').textContent = '💍💍';
+  $('giftTitle').textContent = 'ของขวัญวันครบรอบ 💞';
+  $('giftNext').style.display = '';            // ดูของขวัญครบแล้ว -> ขึ้นปุ่มไปต่อ
+  $('giftText').innerHTML = 'แหวนคู่ของเรา<br>สัญญาว่าจะรักกันไปนานๆ นะ ♥<br><b style="color:var(--gold)">Happy Anniversary</b>';
+}
+
+/* ==================================================
+   8) เมนูตอนจบ: เลือกกลับไปดูส่วนไหนก็ได้
+   ================================================== */
+function afterGame() {                              // เกมจบแล้วไปไหนต่อ
+  if (replay) show('menu'); else show('ticket');
+}
+
+function replayGame() {
+  replay = true;
+  game.running = false;
+  $('gmsg').innerHTML = 'ลากนิ้วซ้าย-ขวาเพื่อบังคับเครื่องบิน<br>หลบบล็อกให้ได้ 20 วินาที (มี 3 ชีวิต)';
+  $('gover').style.display = 'flex';
+  $('gover').querySelector('button').style.display = '';
+  $('gover').querySelector('button').textContent = 'เริ่มเล่น ✈️';
+  show('game');
+}
+
+function replayBirthday() {
+  replay = true;
+  cakeStep = 0;                                     // รีเซ็ตเค้กให้ขอพรใหม่ได้
+  $('candles').textContent = '🕯️🕯️🕯️'; $('candles').style.opacity = 1;
+  $('cakeText').textContent = 'แตะที่เค้ก 1 ครั้งเพื่อ "ขอพร" ✨';
+  $('bnoteBtn').textContent = 'กลับไปเมนู ♥';
+  show('bday');                                     // ไม่เล่นเพลงวันเกิดซ้ำ แต่เพลงครบรอบ (ถ้ากำลังเล่น) ยังเล่นต่อ
+}
+
+function replayAnniversary() {
+  replay = true;
+  $('gateDoor').classList.remove('open');
+  show('room');                                     // ข้ามมือถือ/รหัส เข้าห้องแผ่นเสียงเลย
+}
+</script>
+</body>
+</html>
